@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wwk.mapper.OperationLogMapper">
+    <select id="selectOperationLogVOList" resultType="com.wwk.model.vo.OperationLogVO">
+        SELECT
+        tol.id,
+        `module`,
+        uri,
+        `type`,
+        `name`,
+        description,
+        method,
+        params,
+        `data`,
+        nickname,
+        ip_address,
+        ip_source,
+        times,
+        create_time
+        FROM
+        ( SELECT id FROM t_operation_log
+        <where>
+            <if test="conditionDTO.optModule!=null">
+                `module` LIKE concat('%',#{conditionDTO.optModule},'%')
+            </if>
+            <if test="conditionDTO.keyword!=null">
+                OR description LIKE concat('%',#{conditionDTO.keyword},'%')
+            </if>
+        </where>
+        ORDER BY id DESC LIMIT #{limit}, #{size} ) temp
+        INNER JOIN t_operation_log tol ON temp.id = tol.id
+    </select>
+
+</mapper>
